@@ -135,12 +135,11 @@
         checkLabel.textContent = '✅ Benutzt';
         const check = document.createElement('input');
         check.type = 'checkbox';
-        check.checked = c.used || false;
+        check.checked = false;
         check.onchange = () => {
           if (check.checked) {
-            const confirmDelete = confirm("Möchtest du diesen Coupon wirklich entfernen?");
-            if (confirmDelete) {
-              coupons.splice(i, 1);
+            if (confirm("Möchtest du diesen Coupon wirklich entfernen?")) {
+              coupons = coupons.filter((_, index) => index !== i);
               saveCoupons();
               renderCoupons();
             } else {
@@ -196,4 +195,3 @@
   </script>
 </body>
 </html>
-
