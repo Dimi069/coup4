@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pr0ject 1.1</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -131,6 +132,15 @@
       });
     }
 
+    function extractDate(text) {
+      const match = text.match(/gültig bis[:]?\\s*(\\d{2}\\.\\d{2}\\.\\d{4})/i);
+      if (match) {
+        const [day, month, year] = match[1].split('.');
+        return `${year}-${month}-${day}`;
+      }
+      return '';
+    }
+
     function addCoupon() {
       const fileInput = document.getElementById('imageInput');
       const file = fileInput.files[0];
@@ -139,9 +149,22 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         const imageData = e.target.result;
-        coupons.push({ image: imageData, date: '', used: false });
-        saveCoupons();
-        renderCoupons();
+
+        Tesseract.recognize(
+          imageData,
+          'deu',
+          { logger: m => console.log(m) }
+        ).then(({ data: { text } }) => {
+          const date = extractDate(text);
+          coupons.push({ image: imageData, date: date, used: false });
+          saveCoupons();
+          renderCoupons();
+        }).catch(err => {
+          console.error('OCR Fehler:', err);
+          coupons.push({ image: imageData, date: '', used: false });
+          saveCoupons();
+          renderCoupons();
+        });
       };
       reader.readAsDataURL(file);
     }
