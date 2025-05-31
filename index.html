@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pr0ject 1.1</title>
+  <title>project 1.1</title>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
   <style>
     body {
@@ -39,6 +39,11 @@
     input[type="checkbox"] {
       margin-top: 1em;
     }
+    .validity {
+      margin-top: 0.5em;
+      font-weight: bold;
+      color: #444;
+    }
     #loginOverlay {
       position: fixed;
       top: 0;
@@ -66,7 +71,7 @@
     <button onclick="checkPassword()">Anmelden</button>
   </div>
 
-  <h1>📂 pr0ject 1.1</h1>
+  <h1>📂 project 1.1</h1>
   <input type="file" id="imageInput" accept="image/jpeg" />
   <button onclick="addCoupon()">➕ Hinzufügen</button>
 
@@ -88,6 +93,18 @@
 
     function saveCoupons() {
       localStorage.setItem('coupons', JSON.stringify(coupons));
+    }
+
+    function getRemainingDays(dateStr) {
+      if (!dateStr) return '';
+      const today = new Date();
+      const target = new Date(dateStr);
+      const diffTime = target - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays > 1) return `Noch ${diffDays} Tage gültig`;
+      if (diffDays === 1) return `Noch 1 Tag gültig`;
+      if (diffDays === 0) return `Heute letzter Tag`;
+      return `Abgelaufen`;
     }
 
     function renderCoupons() {
@@ -112,8 +129,14 @@
         dateInput.onchange = () => {
           coupons[i].date = dateInput.value;
           saveCoupons();
+          renderCoupons();
         };
         div.appendChild(dateInput);
+
+        const validityText = document.createElement('div');
+        validityText.className = 'validity';
+        validityText.textContent = getRemainingDays(c.date);
+        div.appendChild(validityText);
 
         const checkLabel = document.createElement('label');
         checkLabel.textContent = '✅ Benutzt';
