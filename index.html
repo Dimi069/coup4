@@ -1,12 +1,9 @@
-<!-- Trigger Pages -->
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>L3t5 F3tz! v1.0</title>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@1.0.19"></script>
+  <title>pr0ject 1.1</title>
   <style>
     body {
       font-family: sans-serif;
@@ -68,14 +65,14 @@
     <button onclick="checkPassword()">Anmelden</button>
   </div>
 
-  <h1>📂m4k3 1t r41n </h1>
+  <h1>📂 pr0ject 1.1</h1>
   <input type="file" id="imageInput" accept="image/jpeg" />
   <button onclick="addCoupon()">➕ Hinzufügen</button>
 
   <div id="couponList"></div>
 
   <script>
-    const correctPassword = "Blumentopf"; // Passwort hier ändern
+    const correctPassword = "Blumentopf";
 
     function checkPassword() {
       const input = document.getElementById('pwInput').value;
@@ -134,15 +131,6 @@
       });
     }
 
-    function extractDate(text) {
-      const match = text.match(/G\S*ltig\s*(?:bis|am)?\s*(\d{2}\.\d{2}\.\d{4})/i);
-      if (match) {
-        const [day, month, year] = match[1].split('.');
-        return `${year}-${month}-${day}`;
-      }
-      return '';
-    }
-
     function addCoupon() {
       const fileInput = document.getElementById('imageInput');
       const file = fileInput.files[0];
@@ -151,21 +139,9 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         const imageData = e.target.result;
-
-        Tesseract.recognize(imageData)
-          .then(result => {
-            const text = result.text;
-            const date = extractDate(text);
-            coupons.push({ image: imageData, date: date, used: false });
-            saveCoupons();
-            renderCoupons();
-          })
-          .catch(err => {
-            console.error('OCR Fehler:', err);
-            coupons.push({ image: imageData, date: '', used: false });
-            saveCoupons();
-            renderCoupons();
-          });
+        coupons.push({ image: imageData, date: '', used: false });
+        saveCoupons();
+        renderCoupons();
       };
       reader.readAsDataURL(file);
     }
